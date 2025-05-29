@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 综合类网站</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .register-container {
+            padding: 90px 20px 40px;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .register-content {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .register-header h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .register-form {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .form-group .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .register-btn:hover {
+            background: #0056b3;
+        }
+
+        .register-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .register-footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .register-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .input-icon input {
+            padding-left: 40px;
+        }
+
+        .password-requirements {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .password-requirements ul {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 5px;
+        }
+
+        .password-requirements li {
+            margin-bottom: 3px;
+        }
+
+        .password-requirements li.valid {
+            color: #28a745;
+        }
+
+        .password-requirements li.valid::before {
+            content: '✓';
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="../index.html">综合网站</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="products.html">产品</a></li>
+                <li><a href="search.html">搜索</a></li>
+                <li><a href="cart.html"><i class="fas fa-shopping-cart"></i> 购物车</a></li>
+                <li><a href="login.html">登录</a></li>
+                <li><a href="register.html" class="active">注册</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="register-container">
+        <div class="register-content">
+            <div class="register-header">
+                <h1>用户注册</h1>
+                <p>创建您的账号，开启购物之旅</p>
+            </div>
+            <form class="register-form">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" name="username" placeholder="请输入用户名">
+                    </div>
+                    <div class="error-message" id="username-error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="email">电子邮箱</label>
+                    <div class="input-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" name="email" placeholder="请输入电子邮箱">
+                    </div>
+                    <div class="error-message" id="email-error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <div class="input-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="请输入密码">
+                    </div>
+                    <div class="error-message" id="password-error"></div>
+                    <div class="password-requirements">
+                        <p>密码要求：</p>
+                        <ul>
+                            <li id="length">至少6个字符</li>
+                            <li id="letter">包含字母</li>
+                            <li id="number">包含数字</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">确认密码</label>
+                    <div class="input-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirm-password" name="confirm-password" placeholder="请再次输入密码">
+                    </div>
+                    <div class="error-message" id="confirm-password-error"></div>
+                </div>
+                <button type="submit" class="register-btn">注册</button>
+            </form>
+            <div class="register-footer">
+                <p>已有账号？<a href="login.html">立即登录</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../assets/js/data.js"></script>
+    <script>
+        $(document).ready(function() {
+            // 密码验证
+            function validatePassword(password) {
+                const hasLength = password.length >= 6;
+                const hasLetter = /[a-zA-Z]/.test(password);
+                const hasNumber = /[0-9]/.test(password);
+
+                $('#length').toggleClass('valid', hasLength);
+                $('#letter').toggleClass('valid', hasLetter);
+                $('#number').toggleClass('valid', hasNumber);
+
+                return hasLength && hasLetter && hasNumber;
+            }
+
+            // 实时密码验证
+            $('#password').on('input', function() {
+                validatePassword($(this).val());
+            });
+
+            // 表单提交
+            $('.register-form').submit(function(e) {
+                e.preventDefault();
+                
+                // 获取表单数据
+                const username = $('#username').val().trim();
+                const email = $('#email').val().trim();
+                const password = $('#password').val();
+                const confirmPassword = $('#confirm-password').val();
+                
+                // 重置错误信息
+                $('.error-message').hide();
+                
+                // 表单验证
+                let isValid = true;
+                
+                if (!username) {
+                    $('#username-error').text('请输入用户名').show();
+                    isValid = false;
+                } else if (username.length < 3) {
+                    $('#username-error').text('用户名长度不能少于3个字符').show();
+                    isValid = false;
+                }
+                
+                if (!email) {
+                    $('#email-error').text('请输入电子邮箱').show();
+                    isValid = false;
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    $('#email-error').text('请输入有效的电子邮箱地址').show();
+                    isValid = false;
+                }
+                
+                if (!password) {
+                    $('#password-error').text('请输入密码').show();
+                    isValid = false;
+                } else if (!validatePassword(password)) {
+                    $('#password-error').text('密码不符合要求').show();
+                    isValid = false;
+                }
+                
+                if (!confirmPassword) {
+                    $('#confirm-password-error').text('请确认密码').show();
+                    isValid = false;
+                } else if (password !== confirmPassword) {
+                    $('#confirm-password-error').text('两次输入的密码不一致').show();
+                    isValid = false;
+                }
+                
+                if (isValid) {
+                    // 检查用户名是否已存在
+                    const users = window.appData.users;
+                    const existingUser = users.find(u => u.username === username);
+                    
+                    if (existingUser) {
+                        $('#username-error').text('该用户名已被注册').show();
+                        return;
+                    }
+                    
+                    // 创建新用户
+                    const newUser = {
+                        id: users.length + 1,
+                        username,
+                        password,
+                        email,
+                        avatar: 'user' + (users.length + 1)
+                    };
+                    
+                    // 添加到用户列表
+                    users.push(newUser);
+                    
+                    // 注册成功
+                    alert('注册成功！');
+                    // 存储用户信息到 localStorage
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        id: newUser.id,
+                        username: newUser.username,
+                        email: newUser.email
+                    }));
+                    // 跳转到首页
+                    window.location.href = '../index.html';
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
