@@ -1,118 +1,118 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>综合类网站 - 首页</title>
-    <!-- CSS 文件 -->
-    <link rel="stylesheet" href="assets/css/style.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <!-- 导航栏 -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="logo">
-                <a href="index.html">综合网站</a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="index.html" class="active">首页</a></li>
-                <li><a href="pages/products.html">产品</a></li>
-                <li><a href="pages/search.html">搜索</a></li>
-                <li><a href="pages/cart.html"><i class="fas fa-shopping-cart"></i> 购物车</a></li>
-                <li><a href="pages/login.html">登录</a></li>
-                <li><a href="pages/register.html">注册</a></li>
-            </ul>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </nav>
-
-    <!-- 轮播图部分 -->
-    <section class="hero-slider">
-        <div class="slider-container">
-            <div class="slide active">
-                <img src="assets/images/slider1.jpg" alt="轮播图1">
-                <div class="slide-content">
-                    <h2>欢迎来到我们的网站</h2>
-                    <p>发现更多精彩内容</p>
-                </div>
-            </div>
-            <!-- 更多轮播图将通过 JavaScript 动态添加 -->
-        </div>
-        <div class="slider-controls">
-            <button class="prev"><i class="fas fa-chevron-left"></i></button>
-            <button class="next"><i class="fas fa-chevron-right"></i></button>
-        </div>
-    </section>
-
-    <!-- 产品分类展示 -->
-    <section class="categories">
-        <div class="container">
-            <h2 class="section-title">产品分类</h2>
-            <div class="category-grid">
-                <div class="category-card">
-                    <img src="assets/images/category1.jpg" alt="分类1">
-                    <h3>分类一</h3>
-                    <p>分类描述内容</p>
-                </div>
-                <!-- 更多分类卡片将通过 JavaScript 动态添加 -->
-            </div>
-        </div>
-    </section>
-
-    <!-- 特色内容展示 -->
-    <section class="features">
-        <div class="container">
-            <h2 class="section-title">特色内容</h2>
-            <div class="feature-grid">
-                <!-- <div class="feature-card">
-                    <i class="fas fa-star"></i>
-                    <h3>特色一</h3>
-                    <p>特色描述内容</p>
-                </div> -->
-                <!-- 更多特色卡片将通过 JavaScript 动态添加 -->
-            </div>
-        </div>
-    </section>
-
-    <!-- 页脚 -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>关于我们</h3>
-                    <p>网站创作来自<a href="https://github.com/Felix-Fan-R/web-shopping-mall-demo" target="_blank" rel="noopener noreferrer" style="color: #007bff; text-decoration: none;">Felix-Fan-R</a></p>
-                </div>
-                <div class="footer-section">
-                    <h3>联系方式</h3>
-                    <p>xiaolangrui@163.com</p>
-                    <p>电话：0123-456-7890</p>
-                </div>
-                <div class="footer-section">
-                    <h3>关注我们</h3>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-weixin"></i></a>
-                        <a href="#"><i class="fab fa-weibo"></i></a>
-                        <a href="#"><i class="fab fa-qq"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 购物网站. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- JavaScript 文件 -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="assets/js/data.js"></script>
-    <script src="assets/js/main.js"></script>
-</body>
-</html> 
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="现代化的企业管理系统，提供高效直观的数据管理和分析功能" />
+    <meta name="keywords" content="管理系统,企业管理,数据分析,后台管理,管理平台" />
+    <meta name="author" content="管理系统团队" />
+    <meta name="theme-color" content="#3a7afe" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <!-- Open Graph / 社交媒体元数据 -->
+    <meta property="og:title" content="企业管理系统" />
+    <meta property="og:description" content="现代化的企业管理系统，提供高效直观的数据管理和分析功能" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://example.com" />
+    <meta property="og:image" content="https://example.com/og-image.jpg" />
+    
+    <title>企业管理系统 | 高效管理平台</title>
+    
+    <!-- 预加载字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="/src/style.css" as="style">
+    <link rel="preload" href="/src/main.js" as="script">
+    
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      }
+      
+      #app {
+        width: 100%;
+        height: 100%;
+      }
+      
+      /* 初始加载动画 */
+      .app-loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #f8fafc;
+        z-index: 9999;
+      }
+      
+      .loading-logo {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 24px;
+        animation: pulse 1.5s infinite ease-in-out;
+      }
+      
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(58, 122, 254, 0.2);
+        border-radius: 50%;
+        border-top-color: #3a7afe;
+        animation: spin 1s linear infinite;
+      }
+      
+      .loading-text {
+        margin-top: 16px;
+        font-size: 16px;
+        color: #4b5563;
+      }
+      
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      
+      @keyframes pulse {
+        0% {
+          transform: scale(0.95);
+          opacity: 0.7;
+        }
+        50% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(0.95);
+          opacity: 0.7;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- 初始加载动画 -->
+      <div class="app-loading">
+        <svg class="loading-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#3a7afe" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+        </svg>
+        <div class="loading-spinner"></div>
+        <div class="loading-text">系统加载中...</div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
