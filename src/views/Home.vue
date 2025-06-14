@@ -1,147 +1,199 @@
 <template>
-  <div class="page-container">
-    <div class="page-header">
-      <h2 class="page-title">系统概览</h2>
-      <div class="page-actions">
-        <el-button-group>
-          <el-button type="primary" @click="goToUserManagement" :icon="User">
-            用户管理
-          </el-button>
-          <el-button type="success" @click="goToDataAnalysis" :icon="DataAnalysis">
-            数据分析
-          </el-button>
-        </el-button-group>
+  <div class="home-page">
+    <!-- 顶部概览卡片 -->
+    <div class="overview-cards">
+      <div class="overview-card" v-for="(card, index) in overviewCards" :key="index" @click="navigateTo(card.route)">
+        <div class="card-icon" :style="{ backgroundColor: card.bgColor }">
+          <el-icon><component :is="card.icon" /></el-icon>
+        </div>
+        <div class="card-content">
+          <div class="card-title">{{ card.title }}</div>
+          <div class="card-value">{{ card.value }}</div>
+          <div class="card-trend" :class="card.trend">
+            <el-icon v-if="card.trend === 'up'"><ArrowUp /></el-icon>
+            <el-icon v-else-if="card.trend === 'down'"><ArrowDown /></el-icon>
+            <el-icon v-else><InfoFilled /></el-icon>
+            <span>{{ card.change }}</span>
+          </div>
+        </div>
+        <div class="card-chart">
+          <div class="sparkline" :id="`sparkline-${index}`"></div>
+        </div>
       </div>
     </div>
-    
-    <div class="page-content">
-      <!-- 欢迎横幅 -->
-      <div class="welcome-section">
-        <div class="welcome-content">
-          <h2 class="welcome-title">欢迎使用管理系统</h2>
-          <p class="welcome-subtitle">高效、直观、专业的企业级管理平台</p>
-          <div class="welcome-actions">
-            <el-button type="primary" size="large">
-              <el-icon><Document /></el-icon>查看文档
-            </el-button>
-            <el-button size="large">
-              <el-icon><VideoPlay /></el-icon>观看教程
-            </el-button>
-          </div>
-        </div>
-        <div class="welcome-image">
-          <img src="https://cdn.jsdelivr.net/gh/apache/echarts-website@asf-site/examples/data/thumb/area-stack-gradient.webp" alt="系统概览" />
-        </div>
-      </div>
-      
-      <!-- 统计数据 -->
-      <div class="stats-section">
-        <h3 class="section-title">
-          <el-icon><TrendCharts /></el-icon>
-          <span>关键指标</span>
-        </h3>
-        <el-row :gutter="20" class="stats-row">
-          <el-col :xs="24" :sm="12" :md="6" :lg="6" :xl="6" v-for="(stat, index) in statistics" :key="index">
-            <div class="stat-card" :class="`stat-card-${index + 1}`" data-aos="fade-up" :data-aos-delay="index * 100">
-              <div class="stat-icon">
-                <el-icon><component :is="stat.icon"></component></el-icon>
-              </div>
-              <div class="stat-content">
-                <div class="stat-value">{{ stat.value }}</div>
-                <div class="stat-title">{{ stat.title }}</div>
-                <div class="stat-trend">
-                  <span :class="stat.trend === 'up' ? 'trend-up' : 'trend-down'">
-                    <el-icon v-if="stat.trend === 'up'"><ArrowUp /></el-icon>
-                    <el-icon v-else><ArrowDown /></el-icon>
-                    {{ stat.change }}
-                  </span>
-                  <span class="trend-period">较上周</span>
-                </div>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-      </div>
-      
-      <!-- 图表和操作区域 -->
-      <el-row :gutter="24" class="chart-row">
-        <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="16">
-          <div class="card chart-card" data-aos="fade-right">
-            <div class="card-header">
-              <h3 class="card-title">
-                <el-icon><Histogram /></el-icon>
-                <span>业务趋势</span>
-              </h3>
-              <el-radio-group v-model="chartTimeRange" size="small">
-                <el-radio-button label="week">本周</el-radio-button>
-                <el-radio-button label="month">本月</el-radio-button>
-                <el-radio-button label="year">全年</el-radio-button>
+
+    <!-- 中间内容区 -->
+    <div class="main-content">
+      <!-- 左侧图表 -->
+      <div class="chart-section">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>业务趋势分析</h3>
+            <div class="chart-actions">
+              <el-radio-group v-model="trendTimeRange" size="small">
+                <el-radio-button label="week">周</el-radio-button>
+                <el-radio-button label="month">月</el-radio-button>
+                <el-radio-button label="year">年</el-radio-button>
               </el-radio-group>
-            </div>
-            <div class="chart-container">
-              <img src="https://cdn.jsdelivr.net/gh/apache/echarts-website@asf-site/examples/data/thumb/line-simple.webp" 
-                   alt="趋势图" class="chart-image" />
-            </div>
-          </div>
-        </el-col>
-        
-        <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
-          <!-- 快捷操作 -->
-          <div class="card action-card" data-aos="fade-left" data-aos-delay="100">
-            <div class="card-header">
-              <h3 class="card-title">
-                <el-icon><Operation /></el-icon>
-                <span>快捷操作</span>
-              </h3>
-            </div>
-            <div class="action-grid">
-              <div class="action-item" v-for="(action, index) in quickActions" :key="index">
-                <el-button :icon="action.icon" circle :type="action.type"></el-button>
-                <span>{{ action.title }}</span>
-              </div>
+              <el-dropdown>
+                <el-button size="small" type="primary" plain>
+                  <el-icon><MoreFilled /></el-icon>
+                </el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item>导出数据</el-dropdown-item>
+                    <el-dropdown-item>打印报表</el-dropdown-item>
+                    <el-dropdown-item>刷新</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </div>
           </div>
-          
-          <!-- 系统通知 -->
-          <div class="card notification-card" data-aos="fade-left" data-aos-delay="200">
-            <div class="card-header">
-              <h3 class="card-title">
-                <el-icon><Bell /></el-icon>
-                <span>系统通知</span>
-              </h3>
-              <el-link type="primary">查看全部</el-link>
+          <div class="chart-body">
+            <div class="trend-chart-placeholder">
+              <img src="https://cdn.jsdelivr.net/gh/apache/echarts-website@asf-site/examples/data/thumb/line-gradient.webp" alt="业务趋势图" />
             </div>
-            <div class="notification-list">
-              <div class="notification-item" v-for="(notification, index) in notifications" :key="index">
-                <el-badge :type="notification.type" dot class="notification-badge"></el-badge>
-                <div class="notification-content">
-                  <div class="notification-text">{{ notification.content }}</div>
-                  <div class="notification-time">{{ notification.time }}</div>
+            <div class="chart-metrics">
+              <div class="metric" v-for="(metric, index) in trendMetrics" :key="index">
+                <div class="metric-title">{{ metric.title }}</div>
+                <div class="metric-value" :style="{ color: metric.color }">{{ metric.value }}</div>
+                <div class="metric-change" :class="metric.trend">
+                  <el-icon v-if="metric.trend === 'up'"><ArrowUp /></el-icon>
+                  <el-icon v-else><ArrowDown /></el-icon>
+                  {{ metric.change }}
                 </div>
               </div>
             </div>
           </div>
-        </el-col>
-      </el-row>
-      
-      <!-- 最近活动 -->
-      <div class="activity-section" data-aos="fade-up">
-        <h3 class="section-title">
-          <el-icon><Clock /></el-icon>
-          <span>最近活动</span>
-        </h3>
-        <div class="timeline">
-          <div class="timeline-item" v-for="(activity, index) in recentActivities" :key="index">
-            <div class="timeline-icon" :style="{ backgroundColor: activity.color }">
-              <el-icon><component :is="activity.icon"></component></el-icon>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>销售数据分析</h3>
+            <div class="chart-actions">
+              <el-select v-model="salesRegion" size="small" placeholder="选择区域">
+                <el-option label="全部区域" value="all" />
+                <el-option label="华东" value="east" />
+                <el-option label="华北" value="north" />
+                <el-option label="华南" value="south" />
+                <el-option label="西部" value="west" />
+              </el-select>
             </div>
-            <div class="timeline-content">
-              <div class="timeline-title">{{ activity.title }}</div>
-              <div class="timeline-desc">{{ activity.description }}</div>
-              <div class="timeline-time">{{ activity.time }}</div>
+          </div>
+          <div class="chart-body">
+            <div class="sales-chart-placeholder">
+              <img src="https://cdn.jsdelivr.net/gh/apache/echarts-website@asf-site/examples/data/thumb/bar-gradient.webp" alt="销售数据图" />
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- 右侧信息 -->
+      <div class="info-section">
+        <div class="info-card">
+          <div class="info-header">
+            <h3>待办事项</h3>
+            <el-button text type="primary" @click="navigateTo('/tasks')">查看全部</el-button>
+          </div>
+          <div class="task-list">
+            <div class="task-item" v-for="(task, index) in tasks" :key="index" @click="handleTaskClick(task)">
+              <el-checkbox v-model="task.completed" @change="updateTaskStatus(index)" />
+              <div class="task-content" :class="{ 'completed': task.completed }">
+                <div class="task-title">{{ task.title }}</div>
+                <div class="task-meta">
+                  <el-tag size="small" :type="task.priority">{{ task.priorityText }}</el-tag>
+                  <span class="task-deadline">{{ task.deadline }}</span>
+                </div>
+              </div>
+              <div class="task-actions">
+                <el-button text circle><el-icon><Edit /></el-icon></el-button>
+                <el-button text circle><el-icon><Delete /></el-icon></el-button>
+              </div>
+            </div>
+          </div>
+          <div class="add-task">
+            <el-input v-model="newTask" placeholder="添加新任务..." @keyup.enter="addTask">
+              <template #append>
+                <el-button @click="addTask"><el-icon><Plus /></el-icon></el-button>
+              </template>
+            </el-input>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-header">
+            <h3>最新动态</h3>
+            <el-button text type="primary" @click="navigateTo('/activities')">查看全部</el-button>
+          </div>
+          <div class="activity-list">
+            <div class="activity-item" v-for="(activity, index) in activities" :key="index" @click="navigateTo(activity.route)">
+              <div class="activity-icon" :style="{ backgroundColor: activity.color }">
+                <el-icon><component :is="activity.icon" /></el-icon>
+              </div>
+              <div class="activity-content">
+                <div class="activity-title">{{ activity.title }}</div>
+                <div class="activity-desc">{{ activity.description }}</div>
+                <div class="activity-time">{{ activity.time }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部区域 -->
+    <div class="bottom-section">
+      <div class="project-card">
+        <div class="project-header">
+          <h3>项目进度</h3>
+          <el-button text type="primary" @click="navigateTo('/projects')">管理项目</el-button>
+        </div>
+        <el-table :data="projects" style="width: 100%" :show-header="false">
+          <el-table-column width="50">
+            <template #default="scope">
+              <div class="project-icon" :style="{ backgroundColor: scope.row.color }">
+                <el-icon><component :is="scope.row.icon" /></el-icon>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="name">
+            <template #default="scope">
+              <div class="project-name">{{ scope.row.name }}</div>
+              <div class="project-desc">{{ scope.row.description }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column width="200">
+            <template #default="scope">
+              <div class="project-progress">
+                <div class="progress-text">{{ scope.row.progress }}%</div>
+                <el-progress :percentage="scope.row.progress" :color="scope.row.color" :stroke-width="8" />
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column width="120">
+            <template #default="scope">
+              <div class="project-members">
+                <el-avatar v-for="(member, i) in scope.row.members.slice(0, 3)" :key="i" :size="28" :src="member.avatar" />
+                <div class="more-members" v-if="scope.row.members.length > 3">+{{ scope.row.members.length - 3 }}</div>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column width="80">
+            <template #default="scope">
+              <el-dropdown>
+                <el-button text><el-icon><MoreFilled /></el-icon></el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item>查看详情</el-dropdown-item>
+                    <el-dropdown-item>编辑项目</el-dropdown-item>
+                    <el-dropdown-item>分享</el-dropdown-item>
+                    <el-dropdown-item divided type="danger">删除</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
     </div>
   </div>
@@ -149,680 +201,685 @@
 
 <script setup>
 import {
-    ArrowDown,
-    ArrowUp,
-    Bell,
-    Clock,
-    DataAnalysis,
-    Delete,
-    Document,
-    Edit,
-    Histogram,
-    Operation,
-    Plus,
-    Setting,
-    TrendCharts,
-    User,
-    VideoPlay
+  ArrowDown,
+  ArrowUp,
+  Delete,
+  Edit,
+  InfoFilled,
+  MoreFilled,
+  Plus
 } from '@element-plus/icons-vue';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import { onMounted, ref } from 'vue';
+import { ElMessage } from 'element-plus';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-const chartTimeRange = ref('month');
+const trendTimeRange = ref('month');
+const salesRegion = ref('all');
+const newTask = ref('');
 
-// 初始化AOS动画库
-onMounted(() => {
-  AOS.init({
-    duration: 800,
-    easing: 'ease-in-out',
-    once: true
-  });
-});
-
-const statistics = ref([
+// 顶部概览卡片数据
+const overviewCards = ref([
   {
-    title: '用户总数',
-    value: '1,254',
+    title: '总用户数',
+    value: '24,568',
+    change: '12% 较上月',
+    trend: 'up',
     icon: 'User',
-    color: 'var(--primary-color)',
-    trend: 'up',
-    change: '12%'
+    bgColor: 'rgba(64, 158, 255, 0.1)',
+    route: '/user-management',
+    data: [28, 40, 36, 52, 38, 60, 55]
   },
   {
-    title: '今日访问',
-    value: '128',
-    icon: 'View',
-    color: 'var(--success-color)',
+    title: '总收入',
+    value: '¥126,560',
+    change: '8% 较上月',
     trend: 'up',
-    change: '8%'
+    icon: 'Money',
+    bgColor: 'rgba(103, 194, 58, 0.1)',
+    route: '/finance',
+    data: [40, 48, 50, 48, 60, 58, 66]
   },
   {
-    title: '待办任务',
-    value: '24',
-    icon: 'Tickets',
-    color: 'var(--warning-color)',
+    title: '订单数',
+    value: '1,286',
+    change: '5% 较上月',
     trend: 'down',
-    change: '5%'
+    icon: 'Goods',
+    bgColor: 'rgba(230, 162, 60, 0.1)',
+    route: '/orders',
+    data: [50, 48, 40, 42, 38, 40, 35]
   },
   {
-    title: '系统消息',
-    value: '6',
-    icon: 'Bell',
-    color: 'var(--danger-color)',
+    title: '客户满意度',
+    value: '96%',
+    change: '2% 较上月',
     trend: 'up',
-    change: '15%'
+    icon: 'View',
+    bgColor: 'rgba(245, 108, 108, 0.1)',
+    route: '/feedback',
+    data: [88, 92, 90, 95, 89, 96, 96]
   }
 ]);
 
-const quickActions = ref([
-  { title: '新增', icon: Plus, type: 'primary' },
-  { title: '编辑', icon: Edit, type: 'success' },
-  { title: '删除', icon: Delete, type: 'danger' },
-  { title: '设置', icon: Setting, type: 'warning' }
+// 趋势图指标
+const trendMetrics = ref([
+  { title: '总访问量', value: '12,846', change: '12%', trend: 'up', color: '#409EFF' },
+  { title: '转化率', value: '32.8%', change: '5%', trend: 'down', color: '#E6A23C' },
+  { title: '平均停留', value: '8分36秒', change: '16%', trend: 'up', color: '#67C23A' }
 ]);
 
-const notifications = ref([
-  { content: '系统更新完成，新版本已发布', time: '10分钟前', type: 'success' },
-  { content: '有2条待审批的申请', time: '1小时前', type: 'warning' },
-  { content: '服务器CPU使用率超过80%', time: '2小时前', type: 'danger' },
-  { content: '今日数据备份已完成', time: '5小时前', type: 'info' }
+// 任务列表
+const tasks = ref([
+  {
+    title: '完成首页设计稿',
+    completed: false,
+    priority: 'danger',
+    priorityText: '紧急',
+    deadline: '今天 18:00'
+  },
+  {
+    title: '准备周会演示文档',
+    completed: false,
+    priority: 'warning',
+    priorityText: '重要',
+    deadline: '明天 10:00'
+  },
+  {
+    title: '审核新用户申请',
+    completed: true,
+    priority: 'success',
+    priorityText: '普通',
+    deadline: '已完成'
+  },
+  {
+    title: '更新系统文档',
+    completed: false,
+    priority: 'info',
+    priorityText: '低优',
+    deadline: '本周五'
+  },
+  {
+    title: '回复客户邮件',
+    completed: false,
+    priority: 'warning',
+    priorityText: '重要',
+    deadline: '今天 15:00'
+  }
 ]);
 
-const recentActivities = ref([
+// 活动列表
+const activities = ref([
   {
     title: '系统更新',
-    description: '系统已更新到最新版本 v2.1.0',
-    time: '今天 10:30',
+    description: '系统已更新至 v2.3.0 版本',
+    time: '10分钟前',
     icon: 'Setting',
-    color: 'var(--primary-color)'
+    color: '#409EFF',
+    route: '/system/update'
   },
   {
     title: '新用户注册',
-    description: '新增用户：张三（ID: 10086）',
-    time: '今天 09:15',
+    description: '张三（ID: 10086）完成注册',
+    time: '30分钟前',
     icon: 'User',
-    color: 'var(--success-color)'
-  },
-  {
-    title: '数据备份',
-    description: '系统数据已成功备份',
-    time: '昨天 23:00',
-    icon: 'Document',
-    color: 'var(--info-color)'
+    color: '#67C23A',
+    route: '/user-management'
   },
   {
     title: '安全警告',
     description: '检测到异常登录尝试',
-    time: '昨天 18:42',
-    icon: 'Warning',
-    color: 'var(--danger-color)'
+    time: '2小时前',
+    icon: 'Bell',
+    color: '#E6A23C',
+    route: '/security'
+  },
+  {
+    title: '数据备份',
+    description: '系统数据备份已完成',
+    time: '今天 08:30',
+    icon: 'Document',
+    color: '#909399',
+    route: '/backup'
   }
 ]);
 
-const goToUserManagement = () => {
-  router.push({
-    path: '/user-management',
-    query: { from: 'home' }
-  });
+// 项目列表
+const projects = ref([
+  {
+    name: '企业官网改版',
+    description: '优化用户体验与响应式设计',
+    progress: 75,
+    color: '#409EFF',
+    icon: 'Monitor',
+    members: [
+      { avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png' },
+      { avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png' },
+      { avatar: 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png' },
+      { avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png' }
+    ]
+  },
+  {
+    name: '移动端应用开发',
+    description: 'iOS与Android双平台应用',
+    progress: 32,
+    color: '#67C23A',
+    icon: 'Folder',
+    members: [
+      { avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png' },
+      { avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png' }
+    ]
+  },
+  {
+    name: '数据中心升级',
+    description: '服务器硬件与软件升级',
+    progress: 51,
+    color: '#E6A23C',
+    icon: 'TrendCharts',
+    members: [
+      { avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png' },
+      { avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png' },
+      { avatar: 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png' }
+    ]
+  }
+]);
+
+// 处理任务点击
+const handleTaskClick = (task) => {
+  ElMessage.info(`查看任务: ${task.title}`);
 };
 
-const goToDataAnalysis = () => {
-  router.push({
-    path: '/data-analysis',
-    query: { from: 'home' }
+// 更新任务状态
+const updateTaskStatus = (index) => {
+  const task = tasks.value[index];
+  if (task.completed) {
+    ElMessage.success(`任务"${task.title}"已完成`);
+    task.deadline = '已完成';
+  } else {
+    task.deadline = task.deadline === '已完成' ? '今天' : task.deadline;
+  }
+};
+
+// 添加新任务
+const addTask = () => {
+  if (!newTask.value.trim()) {
+    ElMessage.warning('任务内容不能为空');
+    return;
+  }
+  
+  tasks.value.unshift({
+    title: newTask.value,
+    completed: false,
+    priority: 'info',
+    priorityText: '低优',
+    deadline: '待定'
   });
+  
+  ElMessage.success('添加任务成功');
+  newTask.value = '';
+};
+
+// 导航到指定路由
+const navigateTo = (route) => {
+  if (route) {
+    router.push(route);
+  }
 };
 </script>
 
 <style scoped>
-.page-container {
-  width: 100%;
-  min-height: 100%;
+.home-page {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  gap: 24px;
+  padding-bottom: 24px;
 }
 
-.page-content {
-  width: 100%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+/* 顶部概览卡片 */
+.overview-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
 }
 
-.page-header {
-  margin-bottom: var(--spacing-4);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--spacing-4);
-}
-
-.page-title {
-  font-size: var(--text-2xl);
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
-  position: relative;
-}
-
-.page-title::after {
-  content: '';
-  position: absolute;
-  bottom: -6px;
-  left: 0;
-  width: 40px;
-  height: 3px;
-  background-color: var(--primary-color);
-  border-radius: var(--radius-full);
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  font-size: var(--text-xl);
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: var(--spacing-3);
-}
-
-.section-title .el-icon {
-  color: var(--primary-color);
-}
-
-/* 欢迎区域 */
-.welcome-section {
-  display: flex;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  margin-bottom: var(--spacing-4);
-  box-shadow: var(--shadow-lg);
-  position: relative;
-}
-
-.welcome-content {
-  flex: 1;
-  padding: var(--spacing-5);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.welcome-title {
-  font-size: var(--text-3xl);
-  font-weight: 700;
-  margin-bottom: var(--spacing-2);
-}
-
-.welcome-subtitle {
-  font-size: var(--text-lg);
-  opacity: 0.9;
-  margin-bottom: var(--spacing-4);
-}
-
-.welcome-actions {
-  display: flex;
-  gap: var(--spacing-4);
-  margin-top: var(--spacing-2);
-}
-
-.welcome-image {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.welcome-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.8;
-}
-
-/* 统计卡片样式 */
-.stats-section {
-  margin-bottom: var(--spacing-4);
-}
-
-.stats-row {
-  margin-bottom: var(--spacing-3);
-}
-
-.stat-card {
+.overview-card {
   background-color: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-5);
-  height: 100%;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
   display: flex;
-  align-items: center;
-  gap: var(--spacing-4);
-  box-shadow: var(--shadow-md);
-  transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
+  cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background-color: var(--primary-color);
+.overview-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
 }
 
-.stat-card-1::before {
-  background-color: var(--primary-color);
-}
-
-.stat-card-2::before {
-  background-color: var(--success-color);
-}
-
-.stat-card-3::before {
-  background-color: var(--warning-color);
-}
-
-.stat-card-4::before {
-  background-color: var(--danger-color);
-}
-
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
-}
-
-.stat-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-full);
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--bg-tertiary);
+  margin-right: 16px;
+  flex-shrink: 0;
 }
 
-.stat-icon .el-icon {
+.card-icon .el-icon {
   font-size: 24px;
   color: var(--primary-color);
 }
 
-.stat-card-1 .stat-icon .el-icon {
-  color: var(--primary-color);
-}
-
-.stat-card-2 .stat-icon .el-icon {
-  color: var(--success-color);
-}
-
-.stat-card-3 .stat-icon .el-icon {
-  color: var(--warning-color);
-}
-
-.stat-card-4 .stat-icon .el-icon {
-  color: var(--danger-color);
-}
-
-.stat-content {
+.card-content {
   flex: 1;
-}
-
-.stat-value {
-  font-size: var(--text-3xl);
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: var(--spacing-1);
-}
-
-.stat-title {
-  font-size: var(--text-sm);
-  color: var(--text-tertiary);
-  margin-bottom: var(--spacing-2);
-}
-
-.stat-trend {
-  font-size: var(--text-xs);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-}
-
-.trend-up {
-  color: var(--success-color);
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.trend-down {
-  color: var(--danger-color);
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.trend-period {
-  color: var(--text-quaternary);
-}
-
-/* 卡片通用样式 */
-.card {
-  background-color: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  transition: all var(--transition-normal);
-  overflow: hidden;
-  height: 100%;
-}
-
-.card:hover {
-  box-shadow: var(--shadow-lg);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-4);
-  border-bottom: 1px solid var(--bg-quaternary);
 }
 
 .card-title {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  font-size: var(--text-lg);
-  font-weight: 600;
-  margin: 0;
-  color: var(--text-primary);
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+  margin-bottom: 4px;
 }
 
-.card-title .el-icon {
-  color: var(--primary-color);
+.card-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.card-trend {
+  display: flex;
+  align-items: center;
+  font-size: var(--text-xs);
+  gap: 4px;
+}
+
+.card-trend.up {
+  color: var(--success-color);
+}
+
+.card-trend.down {
+  color: var(--danger-color);
+}
+
+.card-chart {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100px;
+  height: 40px;
+  opacity: 0.5;
+}
+
+/* 中间内容区 */
+.main-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
 }
 
 /* 图表区域 */
-.chart-row {
-  margin-bottom: var(--spacing-4);
+.chart-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .chart-card {
-  margin-bottom: var(--spacing-4);
+  background-color: var(--bg-primary);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
 }
 
-.chart-container {
-  height: 350px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-4);
-}
-
-.chart-image {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-/* 快捷操作 */
-.action-card {
-  margin-bottom: var(--spacing-4);
-}
-
-.action-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-4);
-  padding: var(--spacing-4);
-}
-
-.action-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-2);
-}
-
-.action-item span {
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-}
-
-/* 通知列表 */
-.notification-card {
-  margin-bottom: var(--spacing-4);
-}
-
-.notification-list {
-  display: flex;
-  flex-direction: column;
-  padding: var(--spacing-4);
-}
-
-.notification-item {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-3);
-  padding: var(--spacing-3) 0;
+.chart-header {
+  padding: 16px 20px;
   border-bottom: 1px solid var(--bg-quaternary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.notification-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+.chart-header h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 600;
 }
 
-.notification-content {
-  flex: 1;
+.chart-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
-.notification-text {
-  font-size: var(--text-sm);
-  margin-bottom: var(--spacing-1);
-  color: var(--text-secondary);
+.chart-body {
+  padding: 20px;
 }
 
-.notification-time {
-  font-size: var(--text-xs);
-  color: var(--text-quaternary);
-}
-
-/* 时间线 */
-.activity-section {
-  margin-bottom: var(--spacing-4);
-}
-
-.timeline {
-  position: relative;
-  padding-left: var(--spacing-6);
-}
-
-.timeline::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 12px;
-  width: 2px;
-  background-color: var(--bg-quaternary);
-}
-
-.timeline-item {
-  position: relative;
-  padding-bottom: var(--spacing-5);
-}
-
-.timeline-item:last-child {
-  padding-bottom: 0;
-}
-
-.timeline-icon {
-  position: absolute;
-  left: -24px;
-  top: 0;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-full);
-  background-color: var(--primary-color);
+.trend-chart-placeholder,
+.sales-chart-placeholder {
+  width: 100%;
+  height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1;
+  overflow: hidden;
+  border-radius: 8px;
 }
 
-.timeline-icon .el-icon {
-  font-size: 14px;
+.trend-chart-placeholder img,
+.sales-chart-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.chart-metrics {
+  display: flex;
+  margin-top: 16px;
+  gap: 20px;
+}
+
+.metric {
+  flex: 1;
+  text-align: center;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: var(--bg-secondary);
+}
+
+.metric-title {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.metric-change {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  gap: 4px;
+}
+
+.metric-change.up {
+  color: var(--success-color);
+}
+
+.metric-change.down {
+  color: var(--danger-color);
+}
+
+/* 信息区域 */
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.info-card {
+  background-color: var(--bg-primary);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.info-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--bg-quaternary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-header h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+/* 任务列表 */
+.task-list {
+  padding: 8px 0;
+}
+
+.task-item {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.task-item:hover {
+  background-color: var(--bg-secondary);
+}
+
+.task-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-title {
+  font-size: var(--text-sm);
+  margin-bottom: 4px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.task-content.completed .task-title {
+  text-decoration: line-through;
+  color: var(--text-tertiary);
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.task-deadline {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.task-actions {
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.task-item:hover .task-actions {
+  opacity: 1;
+}
+
+.add-task {
+  padding: 12px 20px 20px;
+}
+
+/* 活动列表 */
+.activity-list {
+  padding: 8px 0;
+}
+
+.activity-item {
+  padding: 12px 20px;
+  display: flex;
+  gap: 12px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.activity-item:hover {
+  background-color: var(--bg-secondary);
+}
+
+.activity-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.activity-icon .el-icon {
+  font-size: 18px;
   color: white;
 }
 
-.timeline-content {
-  background-color: var(--bg-primary);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-4);
-  box-shadow: var(--shadow-sm);
+.activity-content {
+  flex: 1;
+  min-width: 0;
 }
 
-.timeline-title {
-  font-size: var(--text-base);
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: var(--spacing-1);
-}
-
-.timeline-desc {
+.activity-title {
   font-size: var(--text-sm);
-  color: var(--text-secondary);
-  margin-bottom: var(--spacing-2);
+  font-weight: 500;
+  margin-bottom: 2px;
+  color: var(--text-primary);
 }
 
-.timeline-time {
+.activity-desc {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.activity-time {
   font-size: var(--text-xs);
   color: var(--text-quaternary);
 }
 
+/* 底部区域 */
+.bottom-section {
+  margin-top: 4px;
+}
+
+.project-card {
+  background-color: var(--bg-primary);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.project-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--bg-quaternary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.project-header h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.project-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.project-icon .el-icon {
+  font-size: 16px;
+  color: white;
+}
+
+.project-name {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.project-desc {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.project-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progress-text {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  text-align: right;
+}
+
+.project-members {
+  display: flex;
+  align-items: center;
+}
+
+.project-members .el-avatar {
+  margin-left: -8px;
+  border: 2px solid var(--bg-primary);
+}
+
+.project-members .el-avatar:first-child {
+  margin-left: 0;
+}
+
+.more-members {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--bg-quaternary);
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -8px;
+  border: 2px solid var(--bg-primary);
+}
+
 /* 响应式调整 */
-@media (max-width: 1200px) {
-  .welcome-section {
-    flex-direction: column;
+@media (max-width: 1280px) {
+  .overview-cards {
+    grid-template-columns: repeat(2, 1fr);
   }
   
-  .welcome-image {
-    height: 200px;
-  }
-  
-  .stat-value {
-    font-size: var(--text-2xl);
-  }
-  
-  .chart-container {
-    height: 300px;
+  .main-content {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
-  .welcome-content {
-    padding: var(--spacing-6);
+  .overview-cards {
+    grid-template-columns: 1fr;
   }
   
-  .welcome-title {
-    font-size: var(--text-2xl);
-  }
-  
-  .welcome-subtitle {
-    font-size: var(--text-base);
-  }
-  
-  .welcome-actions {
+  .chart-metrics {
     flex-direction: column;
-    gap: var(--spacing-2);
-    width: 100%;
-  }
-  
-  .action-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .page-actions {
-    margin-top: var(--spacing-2);
-  }
-  
-  .stat-card {
-    padding: var(--spacing-4);
-  }
-  
-  .stat-icon {
-    width: 48px;
-    height: 48px;
-  }
-  
-  .stat-value {
-    font-size: var(--text-xl);
-  }
-  
-  .chart-container {
-    height: 250px;
-  }
-}
-
-@media (max-width: 480px) {
-  .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-2);
-  }
-  
-  .welcome-content {
-    padding: var(--spacing-4);
-  }
-  
-  .welcome-title {
-    font-size: var(--text-xl);
-  }
-  
-  .welcome-image {
-    height: 150px;
-  }
-  
-  .stat-card {
-    padding: var(--spacing-3);
-    gap: var(--spacing-2);
-  }
-  
-  .stat-icon {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .stat-value {
-    font-size: var(--text-lg);
-  }
-  
-  .chart-container {
-    height: 200px;
-  }
-  
-  .timeline {
-    padding-left: var(--spacing-4);
-  }
-  
-  .timeline-icon {
-    width: 20px;
-    height: 20px;
-    left: -20px;
-  }
-  
-  .timeline-content {
-    padding: var(--spacing-3);
   }
 }
 </style> 

@@ -26,6 +26,27 @@ const routes = [
     }
   },
   {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('../views/Dashboard.vue'),
+    meta: {
+      title: '仪表盘',
+      requiresAuth: true,
+      keepAlive: true,
+      permissions: ['admin', 'editor']
+    }
+  },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: () => import('../views/Settings.vue'),
+    meta: {
+      title: '系统设置',
+      requiresAuth: true,
+      permissions: ['admin']
+    }
+  },
+  {
     path: '/about',
     name: 'about',
     component: () => import('../views/About.vue'),
